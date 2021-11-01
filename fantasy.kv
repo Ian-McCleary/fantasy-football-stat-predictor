@@ -1,0 +1,99 @@
+#:kivy 1.10.1
+#: import main main
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+#: import ListItemButton kivy.uix.listview.ListItemButton
+#:import MeshLinePlot kivy.garden.graph.MeshLinePlot
+#:import Popup kivy.uix.popup
+#: import ProgressBar kivy.uix.progressbar
+
+<CustButton@Button>:
+    font_size: 20
+
+<MySpinnerOption@SpinnerOption>:
+    background_color: color_button if self.state == 'down' else color_button_pressed
+    background_down: 'atlas://data/images/defaulttheme/button'
+    color: color_font
+
+<PopupBox>:
+    pop_up_text: p_text
+    auto_dismiss: True
+    title: 'Status'
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            id: p_text
+            text: ''
+
+
+<mainScreenLayout>:
+    id: mainLayout
+    rows: 5
+    padding: 10
+    spacing: 10
+    ready_player_list : player_list_view
+    pyGraph : kvGraph
+    position_dropdown: position_dropdown
+    search_bar_input: search_bar
+    BoxLayout:
+        size_hint_y: 450
+        Graph:
+            id:kvGraph
+            plot: MeshLinePlot
+            xlabel: "Week"
+            ylabel: "Points"
+            x_tics_major:1
+            y_ticks_major:5
+            y_grid_label:True
+            x_grid_label:True
+            padding:10
+            x_grid:True
+            y_grid:True
+            xmin:1
+            xmax:15
+            ymin:-5
+            ymax:55
+            background_color: [0,0,0,1]
+
+    BoxLayout:
+        size_hint_y: 70
+        spacing: 10
+        CustButton:
+            text: "Refresh Player Data"
+            on_press: mainLayout.getPlayerStats(5,14)
+        CustButton:
+            text: "Graph Stats"
+            on_press: mainLayout.selectedFromList()
+
+    BoxLayout:
+        size_hint_y: 70
+        spacing:8
+        Label:
+            id: searchLabel
+            font_size: 17
+            text: "Search For Players"
+            size_hint_x: 2
+        TextInput:
+            id: search_bar
+            font_size: 20
+            multiline: False
+            size_hint_x: 6
+        CustButton:
+            text: "Search"
+            size_hint_x: 1.5
+            on_press: mainLayout.search_button()
+        Spinner:
+            id: position_dropdown
+            text: "All Positions"
+            background_down: 'atlas://data/images/defaulttheme/spinner'
+            size_hint_x:2
+            font_size:18
+            on_release: mainLayout.position_selected_dropdown()
+        
+
+    
+    ListView:
+        size_hint_y: 400
+        id: player_list_view
+        adapter:
+            ListAdapter(data=["Press Refresh"], cls=main.PlayerSelected)
+
